@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>简易聊天室</title>
+    <script src="//apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+
+    <style>
+        /**{box-sizing: content-box;}*/
+        
+        #winChart {
+            overflow: auto;
+            width: 600px;
+            height: 400px;
+            box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.5);
+        }
+        
+        #winChart p {
+            overflow: hidden;
+        }
+        
+        #winChart span {
+            background: #0bd034;
+            color: snow;
+            display: inline-block;
+            line-height: 28px;
+            padding: 5px;
+            margin: 5px 0;
+            font-size: 12px;
+        }
+        
+        #winChart .right {
+            background: seagreen;
+            color: snow;
+            display: block;
+            float: right;
+        }
+        
+        #winChart .uname {
+            display: block;
+            float: right;
+            font-weight: normal;
+            font-size: 9px;
+            padding: 2px;
+        }
+
+         #winChart .uname2 {
+            font-weight: normal;
+            font-size: 9px;
+            padding: 2px;
+        }
+        
+        .enter,.nick {
+            border: none;
+            outline: none;
+            box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.5);
+            width: 580px;
+            height: 40px;
+            padding-left: 20px;
+        }
+        .p1{
+            color:black;
+        }
+    </style>
+</head>
+<body>
+    <p class="p1">码农</p>
+    <div class="win" id="winChart"></div> 
+    <input type="text" class="nick" id="nick" placeholder="昵称"><br>
+    <input type="text" class="enter" placeholder="回车发送">
+    <script>
+        $(function () {
+            /*初始化*/
+            $.post('./chart2.php', { opt: 'init' }, function (res) {
+                var uname = res.data.uid;
+                //绑定发送事件
+                $('.enter').keyup(function (event) {
+                    var th = this;
+                    if (th.value == '') {
+                        return false;
+                    }
+                    //回车发送
+                    if (event.keyCode == 13) {
+                        $.post('./chart2.php', {
+                            opt: 'add',
+                            data: {
+                                content: th.value,
+                                uname: uname,
+                                nick: nick.value
+                            }
+                        });
+                        th.value = '';
+                    }
+                });
+
+                setInterval(function () {
+                    $.post('./chart2.php', {
+                        opt: 'getdata'
+                    }, function (res) {
+                        winChart.innerHTML = '';
+                        for (var i = 0; i < res.data.length; i++) {
+                            if (res.data[i].uname == uname) {
+                                winChart.innerHTML += '<p><span class="right">' + res.data[i].content + '</span><b class="uname">' + res.data[i].nick + '</b></p>';
+                            } else {
+                                winChart.innerHTML += '<p><span>' + res.data[i].content + '</span><b  class="uname2">' + res.data[i].nick + '</b></p>';
+                            }
+                        }
+                        if (winChart.scrollHeight - winChart.scrollTop - 400 <= 10) {
+                            winChart.scrollTop = winChart.scrollHeight;
+                        }
+                    }, 'json');
+                }, 1000);
+            }, 'json');
+        });
+    </script>
+</body>
+</html>
