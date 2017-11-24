@@ -4,10 +4,10 @@ require('./Medoo.php');
 $m = new Medoo([
     // required
 	'database_type' => 'mysql',
-	'database_name' => 'qdm166276650_db',
-	'server' => 'qdm166276650.my3w.com',
-	'username' => 'qdm166276650',
-	'password' => 'ln121300', 
+	'database_name' => 'ajax30',
+	'server' => '127.0.0.1',
+	'username' => 'root',
+	'password' => '123456', 
 	// [optional]
 	'charset' => 'utf8',
 	'port' => 3306,
